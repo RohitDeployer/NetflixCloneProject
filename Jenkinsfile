@@ -57,7 +57,7 @@ pipeline {
                         withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
                             sh "docker build --build-arg KEY_API_TMDB=${test} -t netflixclone ."
                             sh "docker tag netflixclone rohtmore007/netflixclone:latest "
-                            sh "docker tag netflixclone rohtmore007/netflixclone:V${BUILD_NUMBER} "
+                            sh "docker tag netflixclone rohtmore007/netflixclone:V${BUILD_NUMBER}"
                             sh "docker push rohtmore007/netflixclone:latest "
                             sh "docker push rohtmore007/netflixclone:V${BUILD_NUMBER} "
                         }
@@ -73,7 +73,7 @@ pipeline {
         }
         stage('Deploy to container') {
             steps{
-                sh 'docker run -d --name netflix -p 8000:8000 sevenajay/netflix:latest'
+                sh "docker run -d --name netflix -p 8000:8000 rohtmore007/netflixclone:V${BUILD_NUMBER}"
             }
         }
     }
