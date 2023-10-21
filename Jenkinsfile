@@ -73,10 +73,7 @@ pipeline {
         }
         stage('Deploy to container') {
             steps{
-                sh '''#!/bin/bash
-                    sudo kill -9 $(sudo lsof -t -i:80) 
-                '''
-                sh 'docker run -d --name netflix -p 80:80 sevenajay/netflix:latest'
+                sh 'docker run -d --name netflix -p 8000:8000 sevenajay/netflix:latest'
             }
         }
     }
