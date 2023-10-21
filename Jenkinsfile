@@ -53,7 +53,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
-                        sh "docker build --build-arg KEY_API_TMDB=credentials('TMDB_API_Key') -t netflixclone ."
+                        sh "docker build --build-arg KEY_API_TMDB=credentials('API_FOR') -t netflixclone ."
                         sh "docker tag netflixclone rohtmore007/netflixclone:latest "
                         sh "docker tag netflixclone rohtmore007/netflixclone:V${BUILD_NUMBER} "
                         sh "docker push rohtmore007/netflixclone:latest "
