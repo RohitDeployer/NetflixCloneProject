@@ -73,7 +73,15 @@ pipeline {
         }
         stage('Deploy to container') {
             steps{
-                sh 'docker run -d --name netflix -p 80:80 sevenajay/netflix:latest'
+                def portInUse = sh(script: "lsof -t -i :80", returnStdout: true).trim()
+                if (portInUse) {
+                    sh "kill -9 ${portInUse}"
+                    echo "Killed process using port 80: ${portInUse}"
+                    sh 'docker run -d --name netflix -p 80:80 sevenajay/netflix:latest'
+                } else {
+                    echo "Port 80 is not in use, no need to kill any processes."
+                    sh 'docker run -d --name netflix -p 80:80 sevenajay/netflix:latest'
+                }
             }
         }
     }
