@@ -6,6 +6,8 @@ pipeline {
     }
     environment {
         SCANNER_HOME=tool 'Sonar-scanner'
+        TMDB_API_KEY = ''
+
     }
     stages {
         stage('clean workspace') {
@@ -49,17 +51,24 @@ pipeline {
                 sh "trivy fs . > trivyfs.txt"
             }
         }
+        credentialsId: 'Sonarqube-token' 
         stage("Docker Build & Push") {
             steps{
                 script{
-                   withCredentials([string(credentialsId: 'TMDB_API_Key', variable: 'TMDB_V3_API_KEY')]) {
+
+                    // Retrieve TMDB API Key from Jenkins Credentials
+                    withCredentials([string(credentialsId: 'TMDB_API_Key', variable: 'TMDB_API_KEY')]) {
+                        // Assign the retrieved API key to the environment variable
+                        env.TMDB_API_KEY = TMDB_API_KEY
+                    }
+                    //withCredentials([string(credentialsId: 'TMDB_API_Key', variable: 'TMDB_V3_API_KEY')]) {
                         withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
                             sh "docker build --build-arg TMDB_V3_API_KEY=${TMDB_API_Key} -t netflixclone ."
                             sh "docker tag netflixclone rohtmore007/netflixclone:latest "
                             sh "docker push rohtmore007/netflixclone:latest "
                             sh "docker push rohtmore007/netflixclone:V${BUILD_NUMBER} "
                         }
-                    }
+                    //}
                 }
             }
         }
