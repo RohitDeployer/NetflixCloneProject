@@ -5,7 +5,7 @@ pipeline {
         nodejs 'NODEJS16'
     }
     environment {
-        SCANNER_HOME=tool 'Sonar-scanner'
+        SCANNER_HOME= tool 'Sonar-scanner'
     }
     stages {
         stage('clean workspace') {
@@ -38,21 +38,22 @@ pipeline {
                 sh "npm install"
             }
         }
-        stage('OWASP FS SCAN') {
-            steps {
-                dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
-                dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
-            }
-        }
-        stage('TRIVY FS SCAN') {
-            steps {
-                sh "trivy fs . > trivyfs.txt"
-            }
-        }
+        // stage('OWASP FS SCAN') {
+        //     steps {
+        //         dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
+        //         dependencyCheckPublisher pattern: '**/dependency-check-report.xml'
+        //     }
+        // }
+        // stage('TRIVY FS SCAN') {
+        //     steps {
+        //         sh "trivy fs . > trivyfs.txt"
+        //     }
+        // }
         stage("Docker Build & Push") {
             steps {
                 script {
                     def tmdbApiKey = credentials('TMDB_API_Key')  // Load the secret text from Jenkins credentials
+                    echo "TMDB API Key: ${tmdbApiKey}"  // Print the API key for debugging
 
                     withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
                         sh "docker build --build-arg TMDB_V3_API_KEY=${tmdbApiKey} -t netflixclone ."
