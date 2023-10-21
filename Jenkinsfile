@@ -18,14 +18,14 @@ pipeline {
                 git branch: 'Netflix', url: 'https://github.com/Ronit-hub-007/NetflixCloneProject.git'
             }
         }
-        // stage("Sonarqube Analysis ") {
-        //     steps{
-        //         withSonarQubeEnv('Sonarqube') {
-        //             sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Netflix \
-        //             -Dsonar.projectKey=Netflix '''
-        //         }
-        //     }
-        // }
+        stage("Sonarqube Analysis ") {
+            steps{
+                withSonarQubeEnv('Sonarqube') {
+                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Netflix \
+                    -Dsonar.projectKey=Netflix '''
+                }
+            }
+        }
         // stage("quality gate") {
         //    steps {
         //         script {
@@ -33,11 +33,11 @@ pipeline {
         //         }
         //     } 
         // }
-        // stage('Install Dependencies') {
-        //     steps {
-        //         sh "npm install"
-        //     }
-        // }
+        stage('Install Dependencies') {
+            steps {
+                sh "npm install"
+            }
+        }
         // stage('OWASP FS SCAN') {
         //     steps {
         //         dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
@@ -52,12 +52,15 @@ pipeline {
         stage("Docker Build & Push") {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
-                        sh "docker build --build-arg KEY_API_TMDB=credentials('API_FOR') -t netflixclone ."
-                        sh "docker tag netflixclone rohtmore007/netflixclone:latest "
-                        sh "docker tag netflixclone rohtmore007/netflixclone:V${BUILD_NUMBER} "
-                        sh "docker push rohtmore007/netflixclone:latest "
-                        sh "docker push rohtmore007/netflixclone:V${BUILD_NUMBER} "
+
+                    withCredentials([string(credentialsId: 'API_FOR', variable: 'test')]) {
+                        withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
+                            sh "docker build --build-arg KEY_API_TMDB=${test} -t netflixclone ."
+                            sh "docker tag netflixclone rohtmore007/netflixclone:latest "
+                            sh "docker tag netflixclone rohtmore007/netflixclone:V${BUILD_NUMBER} "
+                            sh "docker push rohtmore007/netflixclone:latest "
+                            sh "docker push rohtmore007/netflixclone:V${BUILD_NUMBER} "
+                        }
                     }
                 }
             }
