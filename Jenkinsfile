@@ -60,10 +60,14 @@ pipeline {
         }
         stage("TRIVY") {
             steps{
-                sh "trivy image sevenajay/netflix:latest > trivyimage.txt" 
+                sh "trivy image rohtmore007/netflixclone:latest > trivyimage.txt" 
             }
         }
-
+        stage('Deploy to container') {
+            steps{
+                sh 'docker run -d --name netflix -p 80:80 sevenajay/netflix:latest'
+            }
+        }
     }
     post {
         always {
