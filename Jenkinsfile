@@ -18,14 +18,14 @@ pipeline {
                 git branch: 'Netflix', url: 'https://github.com/Ronit-hub-007/NetflixCloneProject.git'
             }
         }
-        stage("Sonarqube Analysis ") {
-            steps{
-                withSonarQubeEnv('Sonarqube') {
-                    sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Netflix \
-                    -Dsonar.projectKey=Netflix '''
-                }
-            }
-        }
+        // stage("Sonarqube Analysis ") {
+        //     steps{
+        //         withSonarQubeEnv('Sonarqube') {
+        //             sh ''' $SCANNER_HOME/bin/sonar-scanner -Dsonar.projectName=Netflix \
+        //             -Dsonar.projectKey=Netflix '''
+        //         }
+        //     }
+        // }
         // stage("quality gate") {
         //    steps {
         //         script {
@@ -33,11 +33,11 @@ pipeline {
         //         }
         //     } 
         // }
-        stage('Install Dependencies') {
-            steps {
-                sh "npm install"
-            }
-        }
+        // stage('Install Dependencies') {
+        //     steps {
+        //         sh "npm install"
+        //     }
+        // }
         // stage('OWASP FS SCAN') {
         //     steps {
         //         dependencyCheck additionalArguments: '--scan ./ --disableYarnAudit --disableNodeAudit', odcInstallation: 'DP-Check'
@@ -53,7 +53,7 @@ pipeline {
             steps {
                 script {
                     withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
-                        sh "docker build --build-arg KEY_API_TMDB=554141f0d7debfb2c976e06fcf8b58bf -t netflixclone ."
+                        sh "docker build --build-arg KEY_API_TMDB=${TMDB_API_Key} -t netflixclone ."
                         sh "docker tag netflixclone rohtmore007/netflixclone:latest "
                         sh "docker tag netflixclone rohtmore007/netflixclone:V${BUILD_NUMBER} "
                         sh "docker push rohtmore007/netflixclone:latest "
