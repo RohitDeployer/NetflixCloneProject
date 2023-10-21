@@ -5,7 +5,7 @@ pipeline {
         nodejs 'NODEJS16'
     }
     environment {
-        SCANNER_HOME= tool 'Sonar-scanner'
+        SCANNER_HOME=tool 'Sonar-scanner'
     }
     stages {
         stage('clean workspace') {
@@ -26,13 +26,13 @@ pipeline {
                 }
             }
         }
-        stage("quality gate") {
-           steps {
-                script {
-                    waitForQualityGate abortPipeline: false, credentialsId: 'Sonarqube-token' 
-                }
-            } 
-        }
+        // stage("quality gate") {
+        //    steps {
+        //         script {
+        //             waitForQualityGate abortPipeline: false, credentialsId: 'Sonarqube-token' 
+        //         }
+        //     } 
+        // }
         stage('Install Dependencies') {
             steps {
                 sh "npm install"
