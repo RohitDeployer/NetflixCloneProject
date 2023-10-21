@@ -73,7 +73,7 @@ pipeline {
         }
         stage('Deploy to container') {
             steps{
-                sh "docker run -d --name netflix -p 8000:8000 rohtmore007/netflixclone:V${BUILD_NUMBER}"
+                sh "docker run -d --name netflix${BUILD_NUMBER} -p 8000:8000 rohtmore007/netflixclone:V${BUILD_NUMBER}"
             }
         }
     }
