@@ -73,9 +73,10 @@ pipeline {
         }
         stage('Deploy to container') {
             steps{
-                    sh "sudo kill -9 $(sudo lsof -t -i :80)"
-                    echo "Killed process using port 80: ${portInUse}"
-                    sh 'docker run -d --name netflix -p 80:80 sevenajay/netflix:latest'
+                sh '''#!/bin/bash
+                    sudo kill -9 $(sudo lsof -t -i:80) 
+                '''
+                sh 'docker run -d --name netflix -p 80:80 sevenajay/netflix:latest'
             }
         }
     }
