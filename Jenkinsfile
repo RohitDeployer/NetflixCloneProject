@@ -76,8 +76,6 @@ pipeline {
                     sh "sudo kill -9 $(sudo lsof -t -i :80)"
                     echo "Killed process using port 80: ${portInUse}"
                     sh 'docker run -d --name netflix -p 80:80 sevenajay/netflix:latest'
-                    echo "Port 80 is not in use, no need to kill any processes."
-                    sh 'docker run -d --name netflix -p 80:80 sevenajay/netflix:latest'
             }
         }
     }
