@@ -13,6 +13,11 @@ pipeline {
                 cleanWs()
             }
         }
+        stage('Checkout from Git') {
+            steps{
+                git branch: 'Netflix', url: 'https://github.com/Ronit-hub-007/NetflixCloneProject.git'
+            }
+        }
         stage("Sonarqube Analysis ") {
             steps{
                 withSonarQubeEnv('Sonarqube') {
