@@ -45,17 +45,20 @@ pipeline {
             }
         }
         stage("Docker Build & Push") {
-            steps{
-                script{
-                        withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
-                            sh "docker build --build-arg TMDB_V3_API_KEY=554141f0d7debfb2c976e06fcf8b58bf -t netflixclone ."
-                            sh "docker tag netflixclone rohtmore007/netflixclone:latest "
-                            sh "docker push rohtmore007/netflixclone:latest "
-                            sh "docker push rohtmore007/netflixclone:V${BUILD_NUMBER} "
-                        }
+            steps {
+                script {
+                    def tmdbApiKey = credentials('TMDB_API_Key')  // Load the secret text from Jenkins credentials
+
+                    withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
+                        sh "docker build --build-arg TMDB_V3_API_KEY=${tmdbApiKey} -t netflixclone ."
+                        sh "docker tag netflixclone rohtmore007/netflixclone:latest "
+                        sh "docker push rohtmore007/netflixclone:latest "
+                        sh "docker push rohtmore007/netflixclone:V${BUILD_NUMBER} "
+                    }
                 }
             }
         }
+
         stage("TRIVY") {
             steps{
                 sh "trivy image rohtmore007/netflixclone:latest > trivyimage.txt" 
