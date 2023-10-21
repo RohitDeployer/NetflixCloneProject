@@ -52,12 +52,10 @@ pipeline {
         stage("Docker Build & Push") {
             steps {
                 script {
-                    // def tmdbApiKey = credentials('TMDB_API_Key')  // Load the secret text from Jenkins credentials
-                    echo "TMDB API Key: ${credentials('Sonarqube-token')}"   // Print the API key for debugging
-
                     withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
-                        sh "docker build --build-arg TMDB_V3_API_KEY=554141f0d7debfb2c976e06fcf8b58bf -t netflixclone ."
+                        sh "docker build --build-arg KEY_API_TMDB=554141f0d7debfb2c976e06fcf8b58bf -t netflixclone ."
                         sh "docker tag netflixclone rohtmore007/netflixclone:latest "
+                        sh "docker tag netflixclone rohtmore007/netflixclone:V${BUILD_NUMBER} "
                         sh "docker push rohtmore007/netflixclone:latest "
                         sh "docker push rohtmore007/netflixclone:V${BUILD_NUMBER} "
                     }
