@@ -49,20 +49,42 @@ pipeline {
         //         sh "trivy fs . > trivyfs.txt"
         //     }
         // }
+        // stage("Docker Build & Push") {
+        //     steps {
+        //         script {
+        //             withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
+        //                 sh "docker build --build-arg KEY_API_TMDB=${TMDB_API_Key} -t netflixclone ."
+        //                 sh "docker tag netflixclone rohtmore007/netflixclone:latest "
+        //                 sh "docker tag netflixclone rohtmore007/netflixclone:V${BUILD_NUMBER} "
+        //                 sh "docker push rohtmore007/netflixclone:latest "
+        //                 sh "docker push rohtmore007/netflixclone:V${BUILD_NUMBER} "
+        //             }
+        //         }
+        //     }
+        // }
+
         stage("Docker Build & Push") {
             steps {
                 script {
+                    // Use DockerHubCreds for Docker registry authentication
                     withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
-                        sh "docker build --build-arg KEY_API_TMDB=${TMDB_API_Key} -t netflixclone ."
+                        // Access TMDB_API_Key_Credential to get the secret text
+                        def tmdbApiKey = credentials('TMDB_API_Key')
+                        
+                        // Build Docker image with TMDB_API_Key as a build argument
+                        sh "docker build --build-arg KEY_API_TMDB=${tmdbApiKey} -t netflixclone ."
+                        
+                        // Tag the Docker image
                         sh "docker tag netflixclone rohtmore007/netflixclone:latest "
                         sh "docker tag netflixclone rohtmore007/netflixclone:V${BUILD_NUMBER} "
+                        
+                        // Push Docker images to DockerHub
                         sh "docker push rohtmore007/netflixclone:latest "
                         sh "docker push rohtmore007/netflixclone:V${BUILD_NUMBER} "
                     }
                 }
             }
         }
-
         stage("TRIVY") {
             steps{
                 sh "trivy image rohtmore007/netflixclone:latest > trivyimage.txt" 
