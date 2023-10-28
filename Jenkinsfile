@@ -52,7 +52,6 @@ pipeline {
         stage("Docker Build & Push") {
             steps {
                 script {
-
                     withCredentials([string(credentialsId: 'API_FOR', variable: 'test')]) {
                         withDockerRegistry(credentialsId: 'DockerHubCreds', toolName: 'docker') {
                             sh "docker build --build-arg KEY_API_TMDB=${test} -t netflixclone ."
